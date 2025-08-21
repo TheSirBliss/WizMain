@@ -1,0 +1,56 @@
+// Questo definisce il tipo di database e dove trovarlo
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// Questo dice a Prisma come generare il client per il nostro codice
+generator client {
+  provider = "prisma-client-js"
+}
+
+// --- I Modelli delle Nostre Tabelle ---
+
+model User {
+  id               String         @id @default(cuid())
+  email            String         @unique
+  name             String?
+  passwordHash     String? // Hash della password per il login
+  createdAt        DateTime       @default(now())
+  stripeCustomerId String?        @unique
+
+  subscriptions Subscription[]
+  projects      Project[]
+  payments      Payment[]
+}
+
+model Subscription {
+  id                 String   @id @default(cuid())
+  userId             String
+  user               User     @relation(fields: [userId], references: [id])
+  planId             String // es. 'free', 'pro'
+  status             String // es. 'active', 'canceled', 'past_due'
+  currentPeriodEnd   DateTime
+}
+
+model Project {
+  id                 String   @id @default(cuid())
+  userId             String
+  user               User     @relation(fields: [userId], references: [id])
+  name               String
+  status             String // es. 'pending', 'generating', 'completed', 'failed'
+  generatedCodeUrl   String?
+  previewUrl         String?
+  customDomain       String?
+}
+
+model Payment {
+  id                    String   @id @default(cuid())
+  userId                String
+  user                  User     @relation(fields: [userId], references: [id])
+  stripePaymentIntentId String   @unique
+  amount                Int
+  currency              String
+  status                String
+  createdAt             DateTime @default(now())
+}

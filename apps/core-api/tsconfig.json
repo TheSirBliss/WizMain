@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "ES2021",                       /* Imposta la versione di JavaScript target */
+    "module": "commonjs",                      /* Usa il sistema di moduli standard di Node.js */
+    "moduleResolution": "node", // <-- RIGA AGGIUNTA
+    "outDir": "./dist",                        /* Cartella dove mettere il codice compilato */
+    "rootDir": "./src",                        /* Cartella dove si trova il codice sorgente */
+    "strict": true,                            /* Abilita tutti i controlli di tipo stretti */
+    "esModuleInterop": true,                   /* Permette una migliore interoperabilità tra moduli CommonJS ed ES */
+    "skipLibCheck": true,                      /* Salta il controllo dei tipi nelle librerie di terze parti */
+    "forceConsistentCasingInFileNames": true   /* Assicura che i nomi dei file siano consistenti */
+  },
+  "include": ["src/**/*"],                     /* Dice al compilatore di includere tutti i file dentro la cartella src */
+  "exclude": ["node_modules"]                  /* Esclude la cartella node_modules */
+}

@@ -1,0 +1,41 @@
+steps:
+# 1. Costruisci l'immagine Docker del core-api
+- name: 'gcr.io/cloud-builders/docker'
+  args: [
+    'build',
+    '-t',
+    'europe-west12-docker.pkg.dev/$PROJECT_ID/wizai-repo/core-api:$COMMIT_SHA',
+    './apps/core-api'
+  ]
+  id: 'Build API Container'
+
+# 2. Pusha l'immagine su Google Artifact Registry
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'europe-west12-docker.pkg.dev/$PROJECT_ID/wizai-repo/core-api:$COMMIT_SHA']
+  id: 'Push API Container'
+
+# 3. Esegui il deploy della nuova immagine su Cloud Run
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  entrypoint: gcloud
+  args:
+    - 'run'
+    - 'deploy'
+    - 'core-api'
+    - '--image'
+    - 'europe-west12-docker.pkg.dev/$PROJECT_ID/wizai-repo/core-api:$COMMIT_SHA'
+    - '--region'
+    - 'europe-west12'
+    - '--platform'
+    - 'managed'
+    - '--allow-unauthenticated'
+    - '--update-secrets'
+    - 'DATABASE_URL=DATABASE_URL:latest,JWT_SECRET=JWT_SECRET:latest,STRIPE_API_KEY=STRIPE_API_KEY:latest,STRIPE_WEBHOOK_SECRET=STRIPE_WEBHOOK_SECRET:latest,FRONTEND_URL=FRONTEND_URL:latest'
+  id: 'Deploy to Cloud Run'
+
+# Specifica quali immagini container salvare
+images:
+- 'europe-west12-docker.pkg.dev/$PROJECT_ID/wizai-repo/core-api:$COMMIT_SHA'
+
+# NUOVA SEZIONE PER RISOLVERE L'ERRORE DI LOGGING
+options:
+  logging: CLOUD_LOGGING_ONLY

@@ -1,0 +1,59 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql" // O mariadb, come da scelte 
+  url      = env("DATABASE_URL")
+}
+
+// Schema basato sul Task 2.1 del blueprint [cite: 376]
+model User {
+  id                 String          @id @default(cuid())
+  email              String          @unique
+  passwordHash       String
+  name               String?
+  createdAt          DateTime        @default(now())
+  stripeCustomerId   String?         @unique
+  
+  subscriptions      Subscription[]
+  projects           Project[]
+  payments           Payment[]
+}
+
+model Subscription {
+  id                 String   @id @default(cuid())
+  userId             String
+  planId             String // es. 'free', 'pro'
+  status             String // 'active', 'canceled', 'past_due'
+  currentPeriodEnd   DateTime
+  
+  user               User     @relation(fields: [userId], references: [id])
+}
+
+model Project {
+  id                 String   @id @default(cuid())
+  userId             String
+  name               String
+  status             String   // 'pending', 'generating', 'completed', 'failed'
+  generatedCodeUrl   String?  // URL al file .zip su GCS [cite: 368]
+  previewUrl         String?  // URL di Vercel 
+  customDomain       String?
+  
+  user               User     @relation(fields: [userId], references: [id])
+}
+
+model Payment {
+  id                      String   @id @default(cuid())
+  userId                  String
+  stripePaymentIntentId   String   @unique
+  amount                  Int
+  currency                String
+  status                  String
+  createdAt               DateTime @default(now())
+  
+  user                    User     @relation(fields: [userId], references: [id])
+}
