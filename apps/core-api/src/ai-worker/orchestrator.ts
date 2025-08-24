@@ -1,6 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { personalTrainerBlueprint } from './blueprints';
-import { UserDataPayload } from 'shared-types';
+import { UserDataPayload } from './utils';
 import { parseLLMOutput } from './parser';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);

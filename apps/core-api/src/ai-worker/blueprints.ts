@@ -1,4 +1,4 @@
-import { UserDataPayload } from 'shared-types';
+import { UserDataPayload } from './utils';
 
 // Implementazione del blueprint di esempio dal documento [cite: 214]
 export const personalTrainerBlueprint = [
