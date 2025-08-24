@@ -1,29 +1,36 @@
-import { UserDataPayload } from './utils';
+import { UserDataPayload } from 'shared-types';
 
-// Implementazione del blueprint di esempio dal documento [cite: 214]
 export const personalTrainerBlueprint = [
-  // Fase 1: Struttura base e Homepage
+  // Fase 1: Creazione della struttura base e della Homepage
   (data: UserDataPayload) => `
     [ACTION] Fase 1: Genera la struttura di base e la Homepage del sito per '${data.general.projectName}'.
-    [DETAILS] Stile: '${data.general.style}'. Palette: ${JSON.stringify(data.general.palette)}.
-    Includi una navbar con i link alle pagine: ${data.pages.join(', ')}.
-    Rispondi solo con il codice modificato o aggiunto in questa fase. Non rigenerare codice già scritto.
+    [DETAILS] Lo stile deve essere '${data.general.style}' con i colori ${JSON.stringify(data.general.palette)}. La homepage deve avere un titolo di impatto e introdurre i servizi. Includi una navbar con i link alle pagine: ${data.pages.join(', ')}.
   `,
-  // Fase 2: Pagine statiche
+
+  // Fase 2: Creazione delle pagine statiche (Chi Sono, Contatti)
   (data: UserDataPayload) => `
     [ACTION] Fase 2: Basandoti sulla struttura creata, ora genera il contenuto completo per le pagine '/chi-sono' e '/contatti'.
-    [DETAILS] Usa le informazioni di contatto: ${JSON.stringify(data.structured_data.contact_info)}.
-    Rispondi solo con il codice modificato o aggiunto in questa fase. Non rigenerare codice già scritto.
+    [DETAILS] Usa le informazioni di contatto fornite: ${JSON.stringify(data.structured_data.contact_info)}. La pagina 'Chi Sono' deve parlare della filosofia del brand.
   `,
-  // Fase 3: Pagina Servizi
+
+  // Fase 3: Creazione della pagina Servizi con dati strutturati
   (data: UserDataPayload) => `
     [ACTION] Fase 3: Crea la pagina '/servizi'.
-    [DETAILS] Popola la pagina usando questi dati: ${JSON.stringify(data.structured_data.services)}.
-    Rispondi solo con il codice modificato o aggiunto in questa fase. Non rigenerare codice già scritto.
+    [DETAILS] Popola la pagina dinamicamente usando questi dati: ${JSON.stringify(data.structured_data.services)}. Aggiungi un pulsante 'Prenota' sotto ogni servizio.
   `,
+
+  // Fase 4: Implementazione delle funzionalità interattive (Blog e Testimonianze)
+  (data: UserDataPayload) => `
+    [ACTION] Fase 4: Implementa le sezioni dinamiche. Crea la struttura per il Blog come richiesto e aggiungi il carosello delle testimonianze nella Homepage usando questi dati: ${JSON.stringify(data.structured_data.testimonials)}.
+  `,
+
+  // Fase 5: Finalizzazione (Footer, Pagine Legali e SEO)
+  (data: UserDataPayload) => `
+    [ACTION] Fase 5: Completa il sito. Aggiungi un footer completo su tutte le pagine e crea le pagine /privacy-policy e /cookie-policy con testo placeholder. Ottimizza i metatag SEO per ogni pagina.
+  `,
+
   // Fase Finale: Consolidamento
   (data: UserDataPayload) => `
-    [ACTION] Fase Finale: Ottimo lavoro. Ora consolida tutto il codice che hai scritto nelle fasi precedenti.
-    [FORMAT] Genera la struttura completa e finale del progetto, includendo ogni singolo file necessario per l'esecuzione. Usa il formato FILEPATH e ---END-OF-FILE--- come specificato nelle istruzioni iniziali.
+    [ACTION] Fase Finale: Ottimo lavoro. Ora consolida tutto il codice che hai scritto nelle fasi precedenti. Genera la struttura completa del progetto in un singolo oggetto JSON, con ogni file completo e corretto. Assicurati che non ci siano errori e che il progetto sia pronto per il deploy.
   `
 ];
