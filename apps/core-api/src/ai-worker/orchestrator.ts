@@ -2,6 +2,10 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { personalTrainerBlueprint } from './blueprints'; // Importiamo il tuo blueprint
 import { UserDataPayload } from './utils';
 import { parseLLMOutput } from './parser';
+import * as dotenv from "dotenv";
+
+// Load environment variables from .env file
+dotenv.config();
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
