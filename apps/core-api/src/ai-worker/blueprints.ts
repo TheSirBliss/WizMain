@@ -1,4 +1,4 @@
-import { UserDataPayload } from 'shared-types';
+import { UserDataPayload } from './utils';
 
 export const personalTrainerBlueprint = [
   // Fase 1: Creazione della struttura base e della Homepage

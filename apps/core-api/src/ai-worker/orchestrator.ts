@@ -1,6 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { personalTrainerBlueprint } from './blueprints'; // Importiamo il tuo blueprint
-import { UserDataPayload } from 'shared-types';
+import { UserDataPayload } from './utils';
 import { parseLLMOutput } from './parser';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
@@ -40,10 +40,9 @@ export async function orchestrateGeneration(userDataPayload: UserDataPayload): P
     console.log(`Avvio generazione per request_id: ${userDataPayload.request_id}`);
 
     // Eseguiamo tutte le fasi, tranne l'ultima (consolidamento)
-    const mainPhases = blueprint.slice(0, -1); [cite: 455]
 
-    for (let i = 0; i < mainPhases.length; i++) {
-        const phasePromptFunction = mainPhases[i];
+    for (let i = 0; i < blueprint.length; i++) {
+        const phasePromptFunction = blueprint[i];
         const currentPrompt = phasePromptFunction(userDataPayload);
         console.log(`Esecuzione Fase ${i + 1}...`);
         
@@ -57,11 +56,11 @@ export async function orchestrateGeneration(userDataPayload: UserDataPayload): P
     const finalPromptFunction = blueprint[blueprint.length - 1];
     const finalPrompt = finalPromptFunction(userDataPayload);
 
-    const result = await chat.sendMessage(finalPrompt); [cite: 472]
+    const result = await chat.sendMessage(finalPrompt); 
     const finalCodebaseText = result.response.text();
 
     // A questo punto, 'finalCodebaseText' contiene l'intera codebase come singola stringa
-    const fileStructure = parseLLMOutput(finalCodebaseText); [cite: 475]
+    const fileStructure = parseLLMOutput(finalCodebaseText); 
 
     console.log(`Generazione per ${userDataPayload.request_id} completata.`);
     return fileStructure;
