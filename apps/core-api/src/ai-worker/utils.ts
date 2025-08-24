@@ -11,5 +11,6 @@ export interface UserDataPayload {
     pages: string[];
     structured_data: {
         contact_info: { email: string; phone: string; address: string; };
+        services: { };
     };
 }

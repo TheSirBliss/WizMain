@@ -19,10 +19,11 @@ app.get('/ai-worker', (req, res) => {
         },
         pages: ['Home', 'Chi Siamo', 'Servizi', 'Contatti'], // Pagine di default
         structured_data: {
-            contact_info: { email: '', phone: '', address: '' }
+            contact_info: { email: '', phone: '', address: '' },
+            services: "test"
         }
     }
-    
+
   processGenerationRequest( { projectId: "TEST", userId: "TEST", payload: data})
 });
 
