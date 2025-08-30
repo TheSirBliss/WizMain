@@ -32,7 +32,7 @@ export async function deploySite(fileStructure: Record<string, string>, projectN
             await fs.writeFile(fullPath, fileStructure[filePath]);
         }
 
-        return tempDir;
+        return tempDir.replaceAll('public', '');
 
         // // 2. SCUDO DI SICUREZZA: Esegui un audit delle dipendenze
         // if (fileStructure['package.json']) {
@@ -80,7 +80,7 @@ export async function createAndDeployRepo(localPath: string, projectName: string
     console.log(`Creazione repository GitHub 'site-${projectName}'...`);
     const repo = await octokit.repos.createForAuthenticatedUser({
         name: `site-${projectName}`,
-        private: true,
+        private: false,
     });
     const repoFullName = repo.data.full_name;
     const repoUrl = repo.data.clone_url;
