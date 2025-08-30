@@ -32,7 +32,7 @@ export async function deploySite(fileStructure: Record<string, string>, projectN
             await fs.writeFile(fullPath, fileStructure[filePath]);
         }
 
-        return null;
+        return tempDir;
 
         // // 2. SCUDO DI SICUREZZA: Esegui un audit delle dipendenze
         // if (fileStructure['package.json']) {
