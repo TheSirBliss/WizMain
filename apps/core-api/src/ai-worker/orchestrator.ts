@@ -2,13 +2,11 @@
 
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextResponse } from 'next/server';
-import { UserDataPayload } from "./types";
-import { personalTrainerBlueprint } from "./blueprints";
-import { parseLLMOutput } from "./parser";
-import dotenv from "dotenv";
-dotenv.config();
+import { UserDataPayload } from "@/lib/types";
+import { personalTrainerBlueprint } from "@/lib/blueprints";
+import { parseLLMOutput } from "@/lib/parser";
+
 // Inizializza il client di Gemini (la API Key viene letta dalle variabili d'ambiente)
-console.log(process.env.GEMINI_API_KEY)
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
@@ -38,7 +36,7 @@ export async function POST(req: Request) {
  * @param userDataPayload I dati strutturati forniti dall'utente.
  * @returns Un oggetto che rappresenta la struttura dei file del sito web.
  */
-export async function orchestrateGeneration(userDataPayload: UserDataPayload): Promise<Record<string, string>> {
+async function orchestrateGeneration(userDataPayload: UserDataPayload): Promise<Record<string, string>> {
     
     const SYSTEM_PROMPT = `
         # 1. PERSONA E RUOLO
@@ -51,8 +49,6 @@ export async function orchestrateGeneration(userDataPayload: UserDataPayload): P
 
         # 3. FORMATO DELL'OUTPUT (MANDATORIO E RIGIDO)
         - La tua intera risposta DEVE SEMPRE contenere solo blocchi di codice.
-        - Ogni blocco di codice DEVE iniziare con una riga contenente ESATTAMENTE "FILEPATH: **percorso/del/file.tsx**".
-        - Ogni blocco di codice DEVE terminare con una riga contenente ESATTAMENTE "---END-OF-FILE---".
         - Non includere MAI testo conversazionale o spiegazioni al di fuori di questi blocchi.
 
         # 4. PRINCIPI DI SVILUPPO
