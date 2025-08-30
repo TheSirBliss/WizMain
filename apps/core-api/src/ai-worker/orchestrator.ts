@@ -5,7 +5,8 @@ import { NextResponse } from 'next/server';
 import { UserDataPayload } from "./types";
 import { personalTrainerBlueprint } from "./blueprints";
 import { parseLLMOutput } from "./parser";
-
+import dotenv from "dotenv";
+dotenv.config();
 // Inizializza il client di Gemini (la API Key viene letta dalle variabili d'ambiente)
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
