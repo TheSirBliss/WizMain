@@ -83,7 +83,7 @@ app.get('/ai-worker', async (_req: Request, res: Response) => {
     const data: UserDataPayload = {
       request_id: `proj-${Date.now()}`,
       general: {
-        projectName: 'GreenGarden',
+        projectName:  `greenGarden-${Date.now()}`,
         businessType: 'Servizi di giardinaggio',
         targetAudience: 'Privati e aziende locali',
         style: 'Moderno e minimal',
