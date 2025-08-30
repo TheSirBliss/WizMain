@@ -19,6 +19,7 @@
     "@google/generative-ai": "^0.24.1",
     "@octokit/rest": "^22.0.0",
     "dotenv": "^17.2.1",
-    "node-fetch": "^3.3.2"
+    "node-fetch": "^3.3.2",
+    "ollama": "^0.5.17"
   }
 }

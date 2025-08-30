@@ -15,7 +15,7 @@ export function parseLLMOutput(responseText: string): Record<string, string> {
     // ```linguaggio
     // ...codice...
     // ```
-    const regex = /```\s*(.*?)\s*>>>>>>(.+?)<<<<<<<\s*```/gs;
+    const regex = /FILEPATH: (.*?)\s(.*?)---END-OF-FILE---/gs;
 
     // Usiamo matchAll per trovare tutte le occorrenze nel testo
     const matches = responseText.matchAll(regex);
