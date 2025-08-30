@@ -119,7 +119,7 @@ export async function createAndDeployRepo(localPath: string, projectName: string
     }
     
     const vercelProject = await response.json();
-    const previewUrl = `https://${vercelProject.alias[0].domain}`;
+    const previewUrl = `https://${vercelProject.link.repo}.vercel.app/ `;
     console.log(`✅ Deploy avviato! URL di anteprima: ${previewUrl}`);
     
     return previewUrl;
