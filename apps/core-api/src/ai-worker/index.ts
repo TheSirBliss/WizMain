@@ -1,5 +1,5 @@
 import { orchestrateGeneration } from './orchestrator';
-import { deploySite } from './deployment';
+import { deploySite,createAndDeployRepo } from './deployment';
 import { UserDataPayload } from "./types";
 
 /**
@@ -21,7 +21,10 @@ export async function processGenerationRequest(taskData: { projectId: string; us
         
         // Step 3: Se la generazione ha successo, chiamare il servizio di deploy
         // Nota: userId potrebbe servire per la logica di creazione repo, qui passiamo projectName
-        const previewUrl = await deploySite(fileStructure, payload.general.projectName);
+        const previewUrlFp = await deploySite(fileStructure, payload.general.projectName);
+
+
+        const previewUrl = createAndDeployRepo(previewUrlFp, payload.general.projectName);
 
         // Step 4: Aggiornare lo stato a 'completed' e salvare l'URL nel DB
         console.log(`Progetto ${projectId} completato. URL di anteprima: ${previewUrl}`);

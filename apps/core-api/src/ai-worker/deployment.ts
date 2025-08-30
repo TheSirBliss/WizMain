@@ -71,7 +71,7 @@ export async function deploySite(fileStructure: Record<string, string>, projectN
  * @param projectName Nome del progetto.
  * @returns L'URL di anteprima del sito deployato.
  */
-async function createAndDeployRepo(localPath: string, projectName: string): Promise<string> {
+export async function createAndDeployRepo(localPath: string, projectName: string): Promise<string> {
     const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
     const VERCEL_TOKEN = process.env.VERCEL_TOKEN;
     const VERCEL_TEAM_ID = process.env.VERCEL_TEAM_ID; // Opzionale se si usa l'account personale
