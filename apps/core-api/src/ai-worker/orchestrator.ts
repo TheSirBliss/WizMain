@@ -2,9 +2,9 @@
 
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextResponse } from 'next/server';
-import { UserDataPayload } from "@/lib/types";
-import { personalTrainerBlueprint } from "@/lib/blueprints";
-import { parseLLMOutput } from "@/lib/parser";
+import { UserDataPayload } from "./types";
+import { personalTrainerBlueprint } from "./blueprints";
+import { parseLLMOutput } from "./parser";
 
 // Inizializza il client di Gemini (la API Key viene letta dalle variabili d'ambiente)
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
@@ -36,7 +36,7 @@ export async function POST(req: Request) {
  * @param userDataPayload I dati strutturati forniti dall'utente.
  * @returns Un oggetto che rappresenta la struttura dei file del sito web.
  */
-async function orchestrateGeneration(userDataPayload: UserDataPayload): Promise<Record<string, string>> {
+export async function orchestrateGeneration(userDataPayload: UserDataPayload): Promise<Record<string, string>> {
     
     const SYSTEM_PROMPT = `
         # 1. PERSONA E RUOLO

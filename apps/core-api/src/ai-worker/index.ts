@@ -1,6 +1,6 @@
 import { orchestrateGeneration } from './orchestrator';
 import { deploySite } from './deployment';
-import { UserDataPayload } from './utils';
+import { UserDataPayload } from "./types";
 
 /**
  * Punto di ingresso principale per un task di generazione.
