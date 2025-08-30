@@ -19,7 +19,7 @@ const execAsync = promisify(exec);
  * @returns L'URL di anteprima del sito deployato.
  */
 export async function deploySite(fileStructure: Record<string, string>, projectName: string): Promise<string> {
-    const tempDir = path.join('/tmp', `proj-${Date.now()}`);
+    const tempDir = path.join('/tmp', `proj-${Date.now()}`, 'public');
     console.log("File Structure", fileStructure);
     try {
         // 1. Scrivere i file generati in una directory temporanea
