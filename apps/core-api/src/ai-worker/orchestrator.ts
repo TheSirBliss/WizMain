@@ -51,6 +51,11 @@ export async function orchestrateGeneration(userDataPayload: UserDataPayload): P
         # 3. FORMATO DELL'OUTPUT (MANDATORIO E RIGIDO)
         - La tua intera risposta DEVE SEMPRE contenere solo blocchi di codice.
         - Non includere MAI testo conversazionale o spiegazioni al di fuori di questi blocchi.
+        - Genera l’output esclusivamente in questo formato:
+        \`\`\`javascript
+        <contenuto>
+        \`\`\`
+
 
         # 4. PRINCIPI DI SVILUPPO
         - **Completezza:** Assicurati di generare TUTTI i file necessari per un'applicazione Next.js funzionante, inclusi package.json, tailwind.config.ts, next.config.mjs, postcss.config.js, app/layout.tsx, app/globals.css.
