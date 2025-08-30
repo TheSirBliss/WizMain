@@ -1,71 +1,100 @@
+// Path: app/api/orchestrator/route.ts
+
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { personalTrainerBlueprint } from './blueprints'; // Importiamo il tuo blueprint
-import { UserDataPayload } from './utils';
-import { parseLLMOutput } from './parser';
-import * as dotenv from "dotenv";
+import { NextResponse } from 'next/server';
+import { UserDataPayload } from "@/lib/types";
+import { personalTrainerBlueprint } from "@/lib/blueprints";
+import { parseLLMOutput } from "@/lib/parser";
 
-// Load environment variables from .env file
-dotenv.config();
-
+// Inizializza il client di Gemini (la API Key viene letta dalle variabili d'ambiente)
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-export async function orchestrateGeneration(userDataPayload: UserDataPayload): Promise<Record<string, string>> {
-    // Recuperiamo il nostro prompt di sistema
+/**
+ * Funzione principale dell'API che gestisce la richiesta di generazione del sito.
+ */
+export async function POST(req: Request) {
+    try {
+        const userDataPayload: UserDataPayload = await req.json();
+
+        console.log(`[WizMain Orchestrator] Avvio generazione per request_id: ${userDataPayload.request_id}`);
+
+        const fileStructure = await orchestrateGeneration(userDataPayload);
+        
+        console.log(`[WizMain Orchestrator] Generazione completata per request_id: ${userDataPayload.request_id}. File generati: ${Object.keys(fileStructure).length}`);
+
+        return NextResponse.json(fileStructure, { status: 200 });
+
+    } catch (error) {
+        console.error("[WizMain Orchestrator] Errore critico durante la generazione:", error);
+        return NextResponse.json({ error: "La generazione del sito è fallita." }, { status: 500 });
+    }
+}
+
+/**
+ * Orchestra una serie di chiamate all'LLM per costruire un sito web completo.
+ * @param userDataPayload I dati strutturati forniti dall'utente.
+ * @returns Un oggetto che rappresenta la struttura dei file del sito web.
+ */
+async function orchestrateGeneration(userDataPayload: UserDataPayload): Promise<Record<string, string>> {
+    
     const SYSTEM_PROMPT = `
         # 1. PERSONA E RUOLO
-        Sei un Senior Full-Stack Developer e Software Architect con 20 anni di esperienza. [cite: 326]
-        La tua specializzazione è creare applicazioni web esteticamente impeccabili, performanti e sicure utilizzando lo stack tecnologico più moderno.
-        
-        # 2. STACK TECNOLOGICO OBBLIGATORIO
-        - **Framework:** Next.js 14 (con App Router).
-        - **Styling:** Tailwind CSS.
-        - **Linguaggio:** JavaScript con sintassi moderna (ES6+).
-        
-        # 3. FORMATO DELL'OUTPUT (MANDATORIO)
-        - Per le risposte intermedie, fornisci solo il codice per i file modificati o aggiunti.
-        - Per la risposta finale, fornisci l'intera struttura come oggetto JSON. [cite: 335-338]
-        
-        # 4. PRINCIPI DI SVILUPPO
-        - Responsiveness, Accessibilità (a11y), Performance, SEO.
-        - L'output deve essere "production-ready", leggibile, e componentizzato.
+        Sei un Senior Full-Stack Developer e Software Architect con 20 anni di esperienza, specializzato in Next.js. Il tuo compito è scrivere codice "production-ready".
 
-        # 5. SICUREZZA
-        - Utilizza solo librerie npm popolari, ben mantenute e universalmente riconosciute (es. react, next, tailwindcss, clsx, framer-motion, ecc.) per evitare malware. Non includere dipendenze non essenziali.
+        # 2. STACK TECNOLOGICO OBBLIGATORIO
+        - **Framework:** Next.js 14 (con App Router)
+        - **Linguaggio:** TypeScript (usa file .ts e .tsx)
+        - **Styling:** Tailwind CSS. Usa la libreria 'clsx' per gestire le classi condizionali.
+
+        # 3. FORMATO DELL'OUTPUT (MANDATORIO E RIGIDO)
+        - La tua intera risposta DEVE SEMPRE contenere solo blocchi di codice.
+        - Ogni blocco di codice DEVE iniziare con una riga contenente ESATTAMENTE "FILEPATH: **percorso/del/file.tsx**".
+        - Ogni blocco di codice DEVE terminare con una riga contenente ESATTAMENTE "---END-OF-FILE---".
+        - Non includere MAI testo conversazionale o spiegazioni al di fuori di questi blocchi.
+
+        # 4. PRINCIPI DI SVILUPPO
+        - **Completezza:** Assicurati di generare TUTTI i file necessari per un'applicazione Next.js funzionante, inclusi package.json, tailwind.config.ts, next.config.mjs, postcss.config.js, app/layout.tsx, app/globals.css.
+        - **Qualità:** Il codice deve essere pulito, componentizzato, responsive e accessibile (a11y).
+        - **Sicurezza:** Utilizza solo librerie npm popolari e ben mantenute. Le dipendenze base devono essere: react, react-dom, next, tailwindcss, postcss, autoprefixer, typescript, @types/react, @types/node, clsx, framer-motion.
+  
     `;
 
-    // Inizializziamo la cronologia della conversazione con il prompt di sistema
+    // Inizializziamo una sessione di chat con la nostra "costituzione"
     const chat = model.startChat({
-        history: [{ role: 'user', parts: [{ text: SYSTEM_PROMPT }] }, {role: 'model', parts: [{text: 'Sono pronto. Fornisci le specifiche del progetto.'}]}],
+        history: [
+            { role: 'user', parts: [{ text: SYSTEM_PROMPT }] },
+            { role: 'model', parts: [{ text: 'Istruzioni ricevute. Sono pronto a generare il codice nel formato richiesto, fase per fase.' }] }
+        ],
         generationConfig: { maxOutputTokens: 8192 },
     });
 
-    const blueprint = personalTrainerBlueprint;
-    console.log(`Avvio generazione per request_id: ${userDataPayload.request_id}`);
+    const blueprint = personalTrainerBlueprint; // In futuro qui potresti selezionare il blueprint dinamicamente
 
-    // Eseguiamo tutte le fasi, tranne l'ultima (consolidamento)
+    // Separiamo le fasi di costruzione dalla fase finale di consolidamento
+    const mainPhases = blueprint.slice(0, -1);
+    const finalPhase = blueprint[blueprint.length - 1];
 
-    for (let i = 0; i < blueprint.length; i++) {
-        const phasePromptFunction = blueprint[i];
+    // Eseguiamo le fasi di costruzione in sequenza
+    for (let i = 0; i < mainPhases.length; i++) {
+        const phasePromptFunction = mainPhases[i];
         const currentPrompt = phasePromptFunction(userDataPayload);
-        console.log(`Esecuzione Fase ${i + 1}...`);
         
-        // Chiamiamo l'AI e manteniamo la cronologia
-        const result = await chat.sendMessage(currentPrompt);
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        console.log(`[WizMain Orchestrator] Esecuzione Fase ${i + 1}/${mainPhases.length}...`);
+        
+        await chat.sendMessage(currentPrompt);
     }
 
     // Eseguiamo l'ultima fase, quella di consolidamento
-    console.log('Esecuzione Fase Finale: Consolidamento...');
-    const finalPromptFunction = blueprint[blueprint.length - 1];
-    const finalPrompt = finalPromptFunction(userDataPayload);
+    console.log('[WizMain Orchestrator] Esecuzione Fase Finale: Consolidamento...');
+    const finalPrompt = finalPhase(userDataPayload);
 
-    const result = await chat.sendMessage(finalPrompt); 
+    const result = await chat.sendMessage(finalPrompt);
     const finalCodebaseText = result.response.text();
 
-    // A questo punto, 'finalCodebaseText' contiene l'intera codebase come singola stringa
-    const fileStructure = parseLLMOutput(finalCodebaseText); 
+    // Parsiamo l'output finale per ottenere la struttura dei file
+    console.log('[WizMain Orchestrator] Parsing della codebase finale...');
+    const fileStructure = parseLLMOutput(finalCodebaseText);
 
-    console.log(`Generazione per ${userDataPayload.request_id} completata.`);
     return fileStructure;
 }

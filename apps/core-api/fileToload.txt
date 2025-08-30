@@ -1,0 +1,80 @@
+Fase 1 Okay, procedo con la generazione della struttura di base e della homepage per un sito web professionale con i colori specificati.  Dato che il nome del sito non è specificato, lo chiamerò "ExampleSite".  Questa è una struttura minimale per iniziare; ulteriori funzionalità saranno aggiunte nelle fasi successive.
+
+**pages/index.js:**
+
+```javascript
+import Link from 'next/link';
+import { useState } from 'react';
+
+export default function Home() {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  return (
+    <div className="bg-secondary text-primary min-h-screen">
+      <nav className="bg-primary text-secondary p-4 flex justify-between items-center">
+        <h1 className="text-3xl font-bold">ExampleSite</h1>
+        <div className="md:hidden">
+          <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={isMobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
+            </svg>
+          </button>
+        </div>
+        <ul className={`md:flex md:space-x-6 ${isMobileMenuOpen ? 'absolute top-12 left-0 w-full bg-primary text-secondary' : 'hidden md:flex'}`}>
+          <li><Link href="/">Home</Link></li>
+          <li><Link href="/chi-siamo">Chi Siamo</Link></li>
+          <li><Link href="/servizi">Servizi</Link></li>
+          <li><Link href="/contatti">Contatti</Link></li>
+        </ul>
+      </nav>
+
+      <main className="container mx-auto p-8">
+        <h1 className="text-5xl font-bold mb-4 text-center">Benvenuti in ExampleSite</h1>
+        <p className="text-xl mb-8 text-center">Il tuo partner per soluzioni innovative.</p>
+        {/* Aggiungi qui una sezione che introduce i servizi */}
+      </main>
+    </div>
+  );
+}
+```
+
+**pages/chi-siamo.js:**
+
+```javascript
+export default function ChiSiamo() {
+  return (
+    <div>Chi Siamo Page</div>
+  )
+}
+```
+
+**pages/servizi.js:**
+
+```javascript
+export default function Servizi() {
+  return (
+    <div>Servizi Page</div>
+  )
+}
+```
+
+**pages/contatti.js:**
+
+```javascript
+export default function Contatti() {
+  return (
+    <div>Contatti Page</div>
+  )
+}
+```
+
+
+**styles/globals.css:**
+
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Aggiungi eventuali stili personalizzati qui */
+```

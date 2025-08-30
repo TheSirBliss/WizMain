@@ -1,11 +1,25 @@
 import express from 'express';
 import {processGenerationRequest} from './ai-worker/index'
 import { UserDataPayload } from './ai-worker/utils';
+import {parseLLMOutput} from './ai-worker/parser'
+import {deploySite} from './ai-worker/deployment'
+import * as fs from "fs";
+
 const app = express();
 const port = process.env.PORT || 8080;
 
 app.get('/', (req, res) => {
   res.send('AI Wizard Core API is running!');
+});
+
+app.get('/test', (req,res) => {
+  console.log(process.cwd());
+const data: string = fs.readFileSync("fileToload.txt", "utf-8");
+console.log(data);
+const dataFile = parseLLMOutput(data);
+const recordFile = deploySite(dataFile, "PROJECT-TEST");
+
+
 });
 
 app.get('/ai-worker', (req, res) => {

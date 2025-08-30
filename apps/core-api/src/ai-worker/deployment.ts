@@ -19,44 +19,45 @@ const execAsync = promisify(exec);
  */
 export async function deploySite(fileStructure: Record<string, string>, projectName: string): Promise<string> {
     const tempDir = path.join('/tmp', `proj-${Date.now()}`);
-
+    console.log("File Structure", fileStructure);
     try {
         // 1. Scrivere i file generati in una directory temporanea
         console.log(`Scrittura file in directory temporanea: ${tempDir}`);
         await fs.mkdir(tempDir, { recursive: true });
         for (const filePath in fileStructure) {
+            console.log("FILE PATH", filePath);
             const fullPath = path.join(tempDir, filePath);
             await fs.mkdir(path.dirname(fullPath), { recursive: true });
             await fs.writeFile(fullPath, fileStructure[filePath]);
         }
 
-        // 2. SCUDO DI SICUREZZA: Esegui un audit delle dipendenze
-        if (fileStructure['package.json']) {
-            console.log("Trovato package.json, avvio audit di sicurezza...");
+        // // 2. SCUDO DI SICUREZZA: Esegui un audit delle dipendenze
+        // if (fileStructure['package.json']) {
+        //     console.log("Trovato package.json, avvio audit di sicurezza...");
             
-            // Installa le dipendenze per generare il file package-lock.json necessario all'audit
-            console.log("Installazione dipendenze in corso...");
-            await execAsync('npm install', { cwd: tempDir });
+        //     // Installa le dipendenze per generare il file package-lock.json necessario all'audit
+        //     console.log("Installazione dipendenze in corso...");
+        //     await execAsync('npm install', { cwd: tempDir });
             
-            try {
-                // Esegui l'audit. Se trova vulnerabilità HIGH o CRITICAL, lancerà un errore.
-                console.log("Esecuzione npm audit...");
-                await execAsync('npm audit --audit-level=high', { cwd: tempDir });
-                console.log("✅ Audit di sicurezza superato.");
-            } catch (error) {
-                console.error("❌ AUDIT DI SICUREZZA FALLITO:", error.stdout);
-                throw new Error("Trovate vulnerabilità critiche. Deploy annullato.");
-            }
-        }
+        //     try {
+        //         // Esegui l'audit. Se trova vulnerabilità HIGH o CRITICAL, lancerà un errore.
+        //         console.log("Esecuzione npm audit...");
+        //         await execAsync('npm audit --audit-level=high', { cwd: tempDir });
+        //         console.log("✅ Audit di sicurezza superato.");
+        //     } catch (error) {
+        //         console.error("❌ AUDIT DI SICUREZZA FALLITO:", error.stdout);
+        //         throw new Error("Trovate vulnerabilità critiche. Deploy annullato.");
+        //     }
+        // }
 
-        // 3. Se l'audit passa, procedi con il deploy
-        const previewUrl = await createAndDeployRepo(tempDir, projectName);
-        return previewUrl;
+        // // 3. Se l'audit passa, procedi con il deploy
+        // const previewUrl = await createAndDeployRepo(tempDir, projectName);
+        // return previewUrl;
 
     } finally {
         // 4. Pulisci sempre la directory temporanea
-        console.log(`Pulizia directory temporanea: ${tempDir}`);
-        await fs.rm(tempDir, { recursive: true, force: true });
+        // console.log(`Pulizia directory temporanea: ${tempDir}`);
+        // await fs.rm(tempDir, { recursive: true, force: true });
     }
 }
 
