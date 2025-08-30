@@ -13,6 +13,7 @@ dotenv.config();
 /** ------------------- Provider Selector ------------------- */
 function getProvider() {
   const model = process.env.MODEL?.trim();
+  
   if (!model)
     throw new Error(
       "Missing MODEL in .env (e.g. gemini-1.5-flash or gemma3:1b)"
@@ -51,7 +52,7 @@ class GeminiChat implements LLMChat {
           ],
         },
       ],
-      generationConfig: { maxOutputTokens: 8192 },
+      generationConfig: { maxOutputTokens: 819 },
     });
   }
 
