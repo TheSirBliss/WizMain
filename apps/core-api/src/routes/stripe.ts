@@ -3,7 +3,8 @@ import express from 'express'; // Importa express per il middleware raw
 import { authenticateToken } from '../middleware/auth';
 import Stripe from 'stripe';
 import { PrismaClient } from '@prisma/client';
-
+import dotenv from "dotenv";
+dotenv.config();
 const router = Router();
 const prisma = new PrismaClient();
 

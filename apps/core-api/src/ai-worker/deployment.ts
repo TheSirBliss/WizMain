@@ -6,7 +6,8 @@ import * as path from 'path';
 // npm install @octokit/rest node-fetch
 import { Octokit } from "@octokit/rest";
 import fetch from 'node-fetch';
-
+import dotenv from "dotenv";
+dotenv.config();
 
 const execAsync = promisify(exec);
 
@@ -30,6 +31,8 @@ export async function deploySite(fileStructure: Record<string, string>, projectN
             await fs.mkdir(path.dirname(fullPath), { recursive: true });
             await fs.writeFile(fullPath, fileStructure[filePath]);
         }
+
+        return null;
 
         // // 2. SCUDO DI SICUREZZA: Esegui un audit delle dipendenze
         // if (fileStructure['package.json']) {
