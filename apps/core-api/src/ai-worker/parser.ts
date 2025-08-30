@@ -5,6 +5,8 @@
  * @returns Un oggetto Record<string, string> che rappresenta la struttura dei file.
  */
 export function parseLLMOutput(responseText: string): Record<string, string> {
+    console.log("[parseLLMOutput]",responseText);
+    
     console.log("Inizio parsing dell'output LLM (versione Markdown)...");
     const fileStructure: Record<string, string> = {};
 
