@@ -52,9 +52,11 @@ export async function orchestrateGeneration(userDataPayload: UserDataPayload): P
         - La tua intera risposta DEVE SEMPRE contenere solo blocchi di codice.
         - Non includere MAI testo conversazionale o spiegazioni al di fuori di questi blocchi.
         - Genera l’output esclusivamente in questo formato:
-        **filepath/filename**
-        \`\`\`javascript
-        <contenuto>
+        \`\`\`                    
+        **filepath/filename**            
+                            >>>>>>
+                            <contenuto>
+                            <<<<<<<
         \`\`\`
 
 
